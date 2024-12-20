@@ -1,0 +1,190 @@
+<title>玩家列表</title>
+<div class="layui-card layadmin-header">
+    <div class="layui-breadcrumb" lay-filter="breadcrumb">
+        <a lay-href="">主页</a>
+        <a>
+            <cite>玩家管理</cite>
+        </a>
+        <a>
+            <cite>玩家列表</cite>
+        </a>
+        <a>
+            <cite></cite>
+        </a>
+    </div>
+</div>
+<div class="layui-fluid">
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-body">
+                    <div class="table-reload"
+                         style="margin-bottom: 10px; padding-top: 10px; padding-left: 5px; padding-right: 5px;">
+                        <div class="layui-card layui-form" lay-filter="component-form-element">
+                            <div class="layui-card-body layui-row layui-col-space10">
+                                <div class="layui-col-md2">
+                                    <input class="layui-input" name="nickname" id="nickname" placeholder="昵称"
+                                           autocomplete="off">
+                                </div>
+                                <div class="layui-col-md2">
+                                    <input class="layui-input" name="id" id="id" placeholder="ID" autocomplete="off">
+                                </div>
+                                <div class="layui-col-md2">
+                                    <select name="state" id="state" lay-verify="">
+                                        <option value="">请选择状态</option>
+                                        <option value="1">正常</option>
+                                        <option value="2">冻结</option>
+                                    </select>
+                                </div>
+                                <div class="layui-col-md3">
+                                    <button class="layui-btn layui-btn-normal" data-type="reload">搜索</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <table class="layui-hide" id="user_list" lay-filter="user_list"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/html" id="userlist_bar">
+    <a lay-href="user/detail/id={{d.user_id}}" class="layui-btn layui-btn-primary layui-btn-xs"
+       lay-event="detail">详情</a>
+    <!--a lay-href="user/NewFile" class="layui-btn layui-btn-danger layui-btn-xs" lay-event="upgrade">升级</a-->
+</script>
+<script type="text/html" id="user_list_state">
+    <input type="checkbox" name="state" title="冻结" lay-filter="user_list_lock"
+           value="{{d.state}}" data-json="{{ encodeURIComponent(JSON.stringify(d)) }}" {{ d.state== 1
+           ? 'checked' : '' }}>
+</script>
+工具栏模板：
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn" lay-event="add">添加</button>
+        <button class="layui-btn" lay-event="delete">删除</button>
+        <button class="layui-btn" lay-event="update">编辑</button>
+    </div>
+</script>
+<script>
+    layui.use(['admin', 'table'], function () {
+        var admin = layui.admin, table = layui.table, form = layui.form, $ = layui.$, view = layui.view;
+        form.render(null, 'component-form-element');
+        //layer.alert(layui.data(layui.setter.tableName)['access_token']);
+        table.render({
+            elem: '#user_list',
+            url: '../index.php/adminapi/user/list',
+            headers: {'access-token': layui.data(layui.setter.tableName)['access_token']},
+            toolbar: '#toolbarDemo',
+            cols: [
+                [{
+                    field: 'user_id', title: '玩家ID', width: 100
+                }, {
+                    field: 'nickname', title: '昵称', width: 150
+                }, {
+                    field: 'account_type', title: '账号类型', width: 100, templet: function (d) {
+                        if (d.account_type == 0) {
+                            return '普通用户'
+                        }
+                        if (d.account_type == 2) {
+                            return '代理'
+                        }
+                    }
+                }, {
+                    field: 'coupon', width: 80, title: '点券', width: 150, sort: true, event: 'coupon_list'
+                }, {
+                    field: 'bean', title: '金币', width: 80, sort: true, event: 'bean_list'
+                }, {
+                    field: 'card', width: 80, title: '钻石', sort: true, event: 'card_list'
+                }, {
+                    field: 'total', title: '总消费金额', width: 120, sort: true
+                }, {
+                    field: 'gameTimes', title: '游戏总局数', width: 120, sort: true
+                }, {
+                    field: 'register_time', title: '注册时间', width: 200
+                }, {
+                    field: 'last_login_time', title: '是否登录游戏', width: 120, templet: function (d) {
+                        if (d.last_login_time == null || d.last_login_time == '') {
+                            return '否'
+                        } else {
+                            return '是'
+                        }
+                    }
+                }, {
+                    field: 'state', title: '账号状态', width: 120, templet: '#user_list_state', unresize: true
+                }, {
+                    field: 'bonus_open_id', title: '红包可否发放', width: 120, templet: function (d) {
+                        if (d.bonus_open_id != null && d.state == 0) {
+                            return '是'
+                        } else {
+                            return '否'
+                        }
+
+                    }
+                }, {
+                    field: 'bind', width: 160, title: '上级玩家ID及昵称'
+                }, {
+                    title: '操作', width: 80, align: 'center', fixed: 'right', toolbar: '#userlist_bar'
+                }]], page: true, limit: 20
+
+        });
+        //监听工具条
+        table.on('tool(user_list)', function (obj) {
+            var data = obj.data;
+            console.log(data);
+            if (obj.event === 'upgrade') {
+                layer.confirm('确定要升级为渠道商吗?', function (index) {
+                    layer.msg('哦')
+                    layer.close(index);
+                });
+            }
+            if (obj.event === 'coupon_list') {
+                layer.msg('哦')
+            }
+            if (obj.event === 'bean_list') {
+                layer.msg('哦')
+            }
+            if (obj.event === 'card_list') {
+                layer.msg('哦')
+            }
+        });
+
+        active = {
+            reload: function () {
+                var nickname = $('#nickname');
+                var id = $('#id');
+                var state = $('#state');
+
+                //执行重载
+                table.reload('user_list', {
+                    page: {
+                        curr: 1
+                    }, where: {
+                        nickname: nickname.val(), id: id.val(), state: state.val()
+                    }
+                });
+            }, reset: function () {
+                console.log(1);
+            }
+
+        };
+
+        $('.table-reload .layui-btn').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+        //监听锁定操作
+        form.on('checkbox(user_list_lock)', function (obj) {
+            var json = JSON.pars
+            e(decodeURIComponent($(this).data('json')));
+
+            json = table.clearCacheKey(json);
+            console.log(json); //当前行数据
+            $.post('../index.php/adminapi/user/lock', {
+                user_id: json.user_id
+            }, function (ret) {
+
+            })
+        });
+    });
+</script>

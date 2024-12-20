@@ -1,0 +1,166 @@
+<?php
+/**
+ * Auto generated from poker_msg_cs.proto at 2023-06-08 09:49:25
+ */
+
+namespace {
+/**
+ * CSResponseTtypePlayNum message
+ */
+class CSResponseTtypePlayNum extends \ProtobufMessage
+{
+    /* Field index constants */
+    const RESULT = 1;
+    const TTYPE_PLAY_NUM = 2;
+
+    /* @var array Field descriptors */
+    protected static $fields = array(
+        self::RESULT => array(
+            'name' => 'result',
+            'required' => false,
+            'type' => \ProtobufMessage::PB_TYPE_INT,
+        ),
+        self::TTYPE_PLAY_NUM => array(
+            'name' => 'ttype_play_num',
+            'repeated' => true,
+            'type' => '\CSTtypePlayNum'
+        ),
+    );
+
+    /**
+     * Constructs new message container and clears its internal state
+     */
+    public function __construct()
+    {
+        $this->reset();
+    }
+
+    /**
+     * Clears message values and sets default ones
+     *
+     * @return null
+     */
+    public function reset()
+    {
+        $this->values[self::RESULT] = null;
+        $this->values[self::TTYPE_PLAY_NUM] = array();
+    }
+
+    /**
+     * Returns field descriptors
+     *
+     * @return array
+     */
+    public function fields()
+    {
+        return self::$fields;
+    }
+
+    /**
+     * Sets value of 'result' property
+     *
+     * @param integer $value Property value
+     *
+     * @return null
+     */
+    public function setResult($value)
+    {
+        return $this->set(self::RESULT, $value);
+    }
+
+    /**
+     * Returns value of 'result' property
+     *
+     * @return integer
+     */
+    public function getResult()
+    {
+        $value = $this->get(self::RESULT);
+        return $value === null ? (integer)$value : $value;
+    }
+
+    /**
+     * Returns true if 'result' property is set, false otherwise
+     *
+     * @return boolean
+     */
+    public function hasResult()
+    {
+        return $this->get(self::RESULT) !== null;
+    }
+
+    /**
+     * Appends value to 'ttype_play_num' list
+     *
+     * @param \CSTtypePlayNum $value Value to append
+     *
+     * @return null
+     */
+    public function appendTtypePlayNum(\CSTtypePlayNum $value)
+    {
+        return $this->append(self::TTYPE_PLAY_NUM, $value);
+    }
+
+    /**
+     * Clears 'ttype_play_num' list
+     *
+     * @return null
+     */
+    public function clearTtypePlayNum()
+    {
+        return $this->clear(self::TTYPE_PLAY_NUM);
+    }
+
+    /**
+     * Returns 'ttype_play_num' list
+     *
+     * @return \CSTtypePlayNum[]
+     */
+    public function getTtypePlayNum()
+    {
+        return $this->get(self::TTYPE_PLAY_NUM);
+    }
+
+    /**
+     * Returns true if 'ttype_play_num' property is set, false otherwise
+     *
+     * @return boolean
+     */
+    public function hasTtypePlayNum()
+    {
+        return count($this->get(self::TTYPE_PLAY_NUM)) !== 0;
+    }
+
+    /**
+     * Returns 'ttype_play_num' iterator
+     *
+     * @return \ArrayIterator
+     */
+    public function getTtypePlayNumIterator()
+    {
+        return new \ArrayIterator($this->get(self::TTYPE_PLAY_NUM));
+    }
+
+    /**
+     * Returns element from 'ttype_play_num' list at given offset
+     *
+     * @param int $offset Position in list
+     *
+     * @return \CSTtypePlayNum
+     */
+    public function getTtypePlayNumAt($offset)
+    {
+        return $this->get(self::TTYPE_PLAY_NUM, $offset);
+    }
+
+    /**
+     * Returns count of 'ttype_play_num' list
+     *
+     * @return int
+     */
+    public function getTtypePlayNumCount()
+    {
+        return $this->count(self::TTYPE_PLAY_NUM);
+    }
+}
+}
