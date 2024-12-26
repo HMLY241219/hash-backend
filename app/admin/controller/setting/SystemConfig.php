@@ -355,15 +355,26 @@ class SystemConfig extends AuthController
                 }
             }
 
+            $Redis = new \Redis();
+            $Redis->connect(Config::get('redis.ip'));
+            $redis_config = config('systemconfig.config');
             foreach ($post as $k => $v) {
-                if($k == 'mines3_config'){
-                    $Redis = new \Redis();
-                    $Redis->connect(config('redis.ip'), config('redis.port5502'));
-                    $Redis->hSet('mines3_config','ControlRatio',$v);
+                //当独处理redis的值
+                if($redis_config && in_array($k,$redis_config)){
+                    $Redis->hSet('config',$k,$v);
                 }
+
+                //框架自带的
                 ConfigModel::edit(['value' => json_encode($v)], $k, 'menu_name');
             }
             CacheService::clear();
+
+            // 清除配置缓存
+            $cacheKeys = $Redis->keys('SYS_CONF_LIST_*');
+            foreach ($cacheKeys as $ck) {
+                $Redis->del($ck);
+            }
+
             return $this->successful('修改成功');
         }
     }
