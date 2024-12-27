@@ -3,8 +3,8 @@
 
 return [
     'ip' => env('REDIS.REDIS_HOST','127.0.0.1'),  //redis地址 124.221.1.74/
-    'domain' => 'http://1.13.81.132:5009',  //后台域名
-    'api' => 'http://124.221.1.74:9502',  //接口域名
+    'domain' => env('HOST.HOST_DOMAIN'),  //后台域名
+    'api' => env('HOST.HOST_API'),  //接口域名
     'port0' => 6379,
     'port1' => 6501,
     'port2' => 6502,

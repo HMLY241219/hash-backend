@@ -2,6 +2,7 @@
 
 namespace app\admin\controller\setting;
 
+use think\facade\Config;
 use think\facade\Route as Url;
 use app\admin\controller\AuthController;
 use app\admin\model\system\{
@@ -356,7 +357,8 @@ class SystemConfig extends AuthController
             }
 
             $Redis = new \Redis();
-            $Redis->connect(Config::get('redis.ip'));
+            $Redis->connect(env('REDIS.REDIS_HOST'), env('REDIS.REDIS_PORT'));
+            $Redis->auth(env('REDIS.REDIS_AUTH'));
             $redis_config = config('systemconfig.config');
             foreach ($post as $k => $v) {
                 //当独处理redis的值
