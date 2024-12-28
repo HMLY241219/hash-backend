@@ -158,7 +158,11 @@
 
 <script type="text/html" id="act">
     <span class="layui-btn layui-btn-xs " onclick="$eb.createModalFrame(this.innerText,`{:url('edit')}?id={{d.id}}`)">编辑</span>
+    {{# if(d.terrace_id == 20){ }}
+    <span class="layui-btn layui-btn-xs " onclick="$eb.createModalFrame(this.innerText,`{:url('blockGameRule')}?game_id={{d.slotsgameid}}`)">投注规则</span>
+    {{# }; }}
 </script>
+
 <script>
     $(function () {
 
@@ -210,7 +214,7 @@
                 {field: 'hot', title: '热门', align: 'center', minWidth: 80,templet : '#hot'},
                 {field: 'recommend', title: '推荐', align: 'center', minWidth: 80,templet : '#recommend'},
                 {field: 'free', title: '试玩', align: 'center', minWidth: 80,templet : '#free'},
-                {fixed: 'right', title: '操作', align: 'center', width: 130, toolbar: '#act'}
+                {fixed: 'right', title: '操作', align: 'center', width: 200, toolbar: '#act'}
             ]]
             ,limit: limit //每页默认显示的数量
             ,limits: [30,50,100,500] //每页默认显示的数量
@@ -339,9 +343,6 @@
 
         });
     });
-
-
-
 </script>
 {/block}
 

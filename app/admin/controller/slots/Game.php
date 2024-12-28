@@ -36,7 +36,7 @@ class Game extends AuthController
         $page = $data['page'] ?: 1;
         $limit = $data['limit'] ?: 30;
 
-        $field = 'a.id,a.name,a.englishname,a.image,a.status,a.weight,a.type,a.hot,a.recommend,a.love_num,b.name as terrace_name,a.maintain_status,a.free,a.min_money,a.image2';
+        $field = 'a.id,a.name,a.englishname,a.image,a.status,a.weight,a.type,a.hot,a.recommend,a.love_num,b.name as terrace_name,a.maintain_status,a.free,a.min_money,a.image2,a.terrace_id,a.slotsgameid';
 
         $orderfield = "weight";
         $sort = "desc";
@@ -57,9 +57,11 @@ class Game extends AuthController
         if(!$slots_game){
             Json::fail('参数错误!');
         }
+        Form::style()->labelWidth('200px');
 //        $f[] = Form::input('name', 'Slots游戏名称',$slots_game['name']);
         $f[] = Form::uploadImageOne('image', '游戏图片',url('widget.Image/file',['file'=>'image']),$slots_game['image']);
         $f[] = Form::uploadImageOne('image2', '正方形图片',url('widget.Image/file',['file'=>'image2']),$slots_game['image2']);
+        $f[] = Form::input('englishname', '游戏名称', $slots_game['englishname'])->readonly(true);
         $f[] = Form::input('weight', '游戏权重(数值越大越靠前展示)',$slots_game['weight']);
         $f[] = Form::input('min_money', '最低进入金额',$slots_game['min_money']);
         $f[] = Form::select('type', '游戏类型', (string)$slots_game['type'])->options([['label' => '未知', 'value' => 0],['label' => 'Slots', 'value' => 1], ['label' => '真人', 'value' => 2],['label' => '转盘', 'value' => 3],['label' => '区块链', 'value' => 4],['label' => '彩票', 'value' => 5],['label' => '街机', 'value' => 6],['label' => '捕鱼', 'value' => 7],['label' => '体育', 'value' => 8],['label' => '牌桌', 'value' => 9]]);
@@ -71,9 +73,97 @@ class Game extends AuthController
         $f[] = Form::select('orientation', '游戏显示方向',$slots_game['orientation'])->options([['label' => '竖版', 'value' => 1], ['label' => '横版', 'value' => 2]]);
         $f[] = Form::switches('status', '状态', (string)$slots_game['status'])->trueValue('1')->falseValue('0');
 
+        // hash游戏规则
+        if ($slots_game['terrace_id'] == 20) {
+            // 获取hash游戏信息
+            $hashGame = Db::name('block_game')->where('game_id', $slots_game['slotsgameid'])->find();
+            // hash游戏规则表单
+            $this->hashGameBetRuleForm($hashGame, $f);
+        }
+
         $form = Form::make_post_form('修改数据', $f, url('save',['id' => $id]),6);
         $this->assign(compact('form'));
         return $this->fetch('public/form-builder');
+    }
+
+    /**
+     * hash游戏规则表单
+     * @param array $hashGame
+     * @param $form
+     * @return void
+     */
+    protected function hashGameBetRuleForm(array $hashGame, &$form)
+    {
+        // 页面投注规则
+        $betRules = json_decode($hashGame['page_bet_rule'], true);
+        $this->betWayRuleForm($betRules, 'page_bet_rule', '页面投注', $form);
+
+        // 转账投注规则
+        if (!empty($hashGame['transfer_bet_rule'])) {
+            $betRules = json_decode($hashGame['transfer_bet_rule'], true);
+            $this->betWayRuleForm($betRules, 'transfer_bet_rule', '转账投注', $form);
+        }
+    }
+
+    /**
+     * 不同下注方式规则表单
+     * @param array $betRules
+     * @param string $betWay
+     * @param string $betWayTitle
+     * @param $form
+     * @return void
+     */
+    protected function betWayRuleForm(array $betRules, string $betWay, string $betWayTitle, &$form)
+    {
+        $roomLevel = [
+            'room_cj' => '初级场',
+            'room_zj' => '中级场',
+            'room_gj' => '高级场',
+        ];
+        foreach ($betRules as $room => $rule) {
+            // 输赢赔付率
+            $form[] = Form::number("{$betWay}_{$room}_loss_ratio", "{$betWayTitle}-{$roomLevel[$room]}-赔付率", $rule['loss_ratio']);
+            // 输赢赔付率-牛牛
+            if (isset($rule['nn_loss_ratio'])) {
+                $form[] = Form::number("{$betWay}_{$room}_nn_loss_ratio", "{$betWayTitle}-{$roomLevel[$room]}-赔付率-牛牛", $rule['nn_loss_ratio']);
+            }
+            // 输赢赔付率-庄闲（和赢）
+            if (isset($rule['nn_loss_ratio'])) {
+                $form[] = Form::number("{$betWay}_{$room}_zx_equal_loss_ratio", "{$betWayTitle}-{$roomLevel[$room]}-赔付率-庄闲（和赢）", $rule['zx_equal_loss_ratio']);
+            }
+            // 退还手续费率
+            if (isset($rule['sxfee_refund_ratio'])) {
+                $form[] = Form::number("{$betWay}_{$room}_sxfee_refund_ratio", "{$betWayTitle}-{$roomLevel[$room]}-退还手续费率", $rule['sxfee_refund_ratio']);
+            }
+            // 限红-COIN
+            if (!empty($rule['bet_limit']['coin'])) {
+                $form[] = Form::input("{$betWay}_{$room}_bet_limit_coin", "{$betWayTitle}-{$roomLevel[$room]}-限红", "{$rule['bet_limit']['coin'][0]}-{$rule['bet_limit']['coin'][1]}");
+            }
+            // 限红-USDT
+            if (!empty($rule['bet_limit']['usdt'])) {
+                $form[] = Form::input("{$betWay}_{$room}_bet_limit_usdt", "{$betWayTitle}-{$roomLevel[$room]}-限红", "{$rule['bet_limit']['usdt'][0]}-{$rule['bet_limit']['usdt'][1]}");
+            }
+            // 限红-TRX
+            if (!empty($rule['bet_limit']['trx'])) {
+                $form[] = Form::input("{$betWay}_{$room}_bet_limit_trx", "{$betWayTitle}-{$roomLevel[$room]}-限红-TRX", "{$rule['bet_limit']['trx'][0]}-{$rule['bet_limit']['trx'][1]}");
+            }
+            // 庄闲下注区域和，限红
+            if (!empty($rule['bet_limit_other'])) {
+                // 限红-COIN
+                if (!empty($rule['bet_limit_other']['coin'])) {
+                    $form[] = Form::input("{$betWay}_{$room}_bet_limit_other_coin", "{$betWayTitle}-{$roomLevel[$room]}-限红", "{$rule['bet_limit_other']['coin'][0]}-{$rule['bet_limit_other']['coin'][1]}");
+                }
+                // 限红-USDT
+                if (!empty($rule['bet_limit_other']['usdt'])) {
+                    $form[] = Form::input("{$betWay}_{$room}_bet_limit_other_usdt", "{$betWayTitle}-{$roomLevel[$room]}-限红", "{$rule['bet_limit_other']['usdt'][0]}-{$rule['bet_limit_other']['usdt'][1]}");
+                }
+                $form[] = Form::input("{$betWay}_{$room}_bet_limit_other_coin", "{$betWayTitle}-{$roomLevel[$room]}-限红-USDT", "{$rule['bet_limit_other']['coin'][0]}-{$rule['bet_limit_other']['coin'][1]}");
+                // 限红-TRX
+                if (!empty($rule['bet_limit_other']['trx'])) {
+                    $form[] = Form::input("{$betWay}_{$room}_bet_limit_other_trx", "{$betWayTitle}-{$roomLevel[$room]}-限红-TRX", "{$rule['bet_limit_other']['trx'][0]}-{$rule['bet_limit_other']['trx'][1]}");
+                }
+            }
+        }
     }
 
 
@@ -601,6 +691,81 @@ class Game extends AuthController
             'terrace_id' => 11, //我们平台的厂商ID
             'is_gameid_status' => 1, //是否检查该三方平台gameID重复
         ];
+    }
+
+    /**
+     * 编辑区块游戏规则
+     * @return string
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\DbException
+     * @throws \think\db\exception\ModelNotFoundException
+     */
+    public function blockGameRule()
+    {
+        $params =  request()->param();
+        $info = Db::name('block_game')->where('game_id',$params['game_id'])->find();
+        if ($info) {
+            $info['page_bet_rule'] = json_decode($info['page_bet_rule'], true);
+            $info['transfer_bet_rule'] = json_decode($info['transfer_bet_rule'], true);
+        }
+        $this->assign('game_id', $info['game_id'] ?? []);
+        $this->assign('game_name', $info['game_name'] ?? []);
+        $this->assign('page_rule', $info['page_bet_rule'] ?? []);
+        $this->assign('transfer_rule', $info['transfer_bet_rule'] ?? []);
+        return $this->fetch('edit_bet_rule');
+    }
+
+    /**
+     * 保存区块游戏投注规则
+     * @return null
+     * @throws \think\db\exception\DbException
+     */
+    public function saveBlockGameRule()
+    {
+        $params =  request()->param();
+        $ruleType = $params['rule_type'] ?? '';
+        $roomRule = $this->packRoomRule($params, $ruleType);
+        if ($roomRule) {
+            // 更新数据
+            $res = Db::name('block_game')->where('game_id',$params['game_id'])->update([$ruleType.'_bet_rule' => json_encode($roomRule)]);
+        }
+        if (!$res) {
+            return Json::fail('操作失败');
+        }
+        return Json::success('操作成功');
+    }
+
+    /**
+     * 组装场次数据
+     * @param array $params
+     * @param string $ruleType
+     * @return array
+     */
+    public function packRoomRule(array $params, string $ruleType): array
+    {
+        $rooms = ['room_cj', 'room_zj'];
+        if ($ruleType == 'page') $rooms[] = 'room_gj';
+        $roomRule = [];
+        foreach ($rooms as $r) {
+            // 赔率
+            $roomRule[$r]['loss_ratio'] = $params[$r.'_loss_ratio'];
+            if (isset($params[$r.'_nn_loss_ratio'])) $roomRule[$r]['nn_loss_ratio'] = $params[$r.'_nn_loss_ratio'];
+            if (isset($params[$r.'_zx_equal_loss_ratio'])) $roomRule[$r]['zx_equal_loss_ratio'] = $params[$r.'_zx_equal_loss_ratio'];
+            if (isset($params[$r.'_sxfee_refund_ratio'])) $roomRule[$r]['sxfee_refund_ratio'] = $params[$r.'_sxfee_refund_ratio'];
+
+            // 限红
+            if ($ruleType == 'transfer') {
+                $roomRule[$r]['bet_limit']['usdt'] = explode('-', $params[$r.'_bet_limit_usdt']);
+                $roomRule[$r]['bet_limit']['trx'] = explode('-', $params[$r.'_bet_limit_trx']);
+                if (isset($params[$r.'_bet_limit_other_usdt'])) $roomRule[$r]['bet_limit_other']['usdt'] = explode('-', $params[$r.'_bet_limit_other_usdt']);
+                if (isset($params[$r.'_bet_limit_other_trx'])) $roomRule[$r]['bet_limit_other']['trx'] = explode('-', $params[$r.'_bet_limit_other_trx']);
+                $roomRule[$r]['bet_address'] = $params[$r.'_bet_address'];
+            } else {
+                $roomRule[$r]['bet_limit']['coin'] = explode('-', $params[$r.'_bet_limit_coin']);
+                if (isset($params[$r.'_bet_limit_other_coin'])) $roomRule[$r]['bet_limit_other']['coin'] = explode('-', $params[$r.'_bet_limit_other_coin']);
+            }
+        }
+        return $roomRule;
     }
 }
 
