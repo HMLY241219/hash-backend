@@ -640,10 +640,20 @@ class Game extends AuthController
             // 更新数据
             $res = Db::name('block_game')->where('game_id',$params['game_id'])->update([$ruleType.'_bet_rule' => json_encode($roomRule)]);
         }
-        if (!$res) {
-            return Json::fail('操作失败');
+        if ($res) {
+            // 清除游戏信息缓存
+            $Redis = getRedisConnect();
+            $cacheKeys = $Redis->keys('BLOCK_GAME_LIST_*');
+            foreach ($cacheKeys as $ck) {
+                $Redis->del($ck);
+            }
+            $cacheKeys = $Redis->keys('BLOCK_GAME_INFO_*');
+            foreach ($cacheKeys as $ck) {
+                $Redis->del($ck);
+            }
+            return Json::success('操作成功');
         }
-        return Json::success('操作成功');
+        return Json::fail('操作失败');
     }
 
     /**

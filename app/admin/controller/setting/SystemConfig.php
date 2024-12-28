@@ -356,12 +356,7 @@ class SystemConfig extends AuthController
                 }
             }
 
-            $Redis = new \Redis();
-            $Redis->connect(env('REDIS.REDIS_HOST'), env('REDIS.REDIS_PORT'));
-            $auth = env('REDIS.REDIS_AUTH');
-            if (!empty($auth)) {
-                $Redis->auth(env('REDIS.REDIS_AUTH'));
-            }
+            $Redis = getRedisConnect();
             $redis_config = config('systemconfig.config');
             foreach ($post as $k => $v) {
                 //当独处理redis的值

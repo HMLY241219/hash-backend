@@ -501,3 +501,18 @@ function getOldAbSession($num)
 
     return $list[$num] ?? '';
 }
+
+/**
+ * 获取redis链接
+ * @return Redis
+ * @throws RedisException
+ */
+function getRedisConnect () {
+    $Redis = new \Redis();
+    $Redis->connect(env('REDIS.REDIS_HOST'), env('REDIS.REDIS_PORT'));
+    $auth = env('REDIS.REDIS_AUTH');
+    if (!empty($auth)) {
+        $Redis->auth(env('REDIS.REDIS_AUTH'));
+    }
+    return $Redis;
+}
