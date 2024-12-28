@@ -132,7 +132,7 @@
                                 {/if}
                                 {if isset($item.sxfee_refund_ratio) }
                                 <div class="layui-form-item">
-                                    <label class="layui-form-label">退款手续费率</label>
+                                    <label class="layui-form-label">退款手续费率（%）</label>
                                     <div class="layui-input-block">
                                         <input type="number" name="{$room}_sxfee_refund_ratio" required  lay-verify="required" placeholder="请输入手续费率" autocomplete="off" class="layui-input" value="{$item.sxfee_refund_ratio}">
                                     </div>
