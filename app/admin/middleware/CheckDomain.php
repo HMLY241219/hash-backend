@@ -4,13 +4,12 @@ namespace app\admin\middleware;
 class CheckDomain
 {
     // 允许的域名列表
-    protected $allowedDomains = [
-        '127.0.0.1',
-    ];
+    protected $allowedDomains = [];
 
     public function handle($request, \Closure $next)
     {
-        $this->allowedDomains[] = env('HOST.HOST_DOMAIN_ALLOWED');
+        $allowedDomains = env('HOST.HOST_DOMAIN_ALLOWED', '127.0.0.1');
+        $this->allowedDomains = explode(',', $allowedDomains);
 
         // 获取请求的域名
         $domain = $request->host();
