@@ -91,11 +91,11 @@ class Addsubcoin extends AuthController
         $data['admin_id'] = $adminId;
         $data['updatetime'] = time();
         $userinfo = Db::name('userinfo')->where('uid',$data['uid'])->find();
-        $data['package_id'] = $userinfo['package_id'];
-        $data['channel'] = $userinfo['channel'];
         if(!$userinfo){
             Json::fail('请输入正确的用户ID');
         }
+        $data['package_id'] = $userinfo['package_id'];
+        $data['channel'] = $userinfo['channel'];
         if($data['coin'] <= 0 ){
             Json::fail('抱歉操作金额必须大于0');
         }
