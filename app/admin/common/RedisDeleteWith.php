@@ -2,9 +2,6 @@
 
 namespace app\admin\common;
 
-use app\api\controller\My;
-use customlibrary\Common;
-use think\facade\Db;
 use think\facade\Log;
 
 class RedisDeleteWith{
