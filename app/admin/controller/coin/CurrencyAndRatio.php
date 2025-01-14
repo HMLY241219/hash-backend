@@ -136,7 +136,8 @@ class CurrencyAndRatio extends AuthController
 
 
     public function redisInfo($data,$status){
-        $redis = new \app\admin\common\RedisDeleteWith();
+        $redisDeleteWith = new \app\admin\common\RedisDeleteWith();
+        $redis = $redisDeleteWith->getRedis();
         if(!$redis)return 0;
         if($status == 1){
             $list = [
@@ -148,7 +149,7 @@ class CurrencyAndRatio extends AuthController
         }else{
             $redis->hdel('currency_and_ratio_'.$data['type'],$data['name']);
         }
-        return1;
+        return 1;
     }
 }
 
