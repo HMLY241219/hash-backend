@@ -78,19 +78,26 @@ class CurrencyAndRatio extends AuthController
 
         $data = request()->post();
 
+        $res = $this->redisInfo($data,$data['status']);
+        if(!$res)return  Json::fail('Redis链接失败');
+
         if($id > 0){
 
             $res = Db::name($this->table)->where('id','=',$id)->update($data);
             if(!$res){
-                Json::fail('编辑失败');
+                return Json::fail('编辑失败');
             }
+
 
         }else{
             $res = Db::name($this->table)->insert($data);
             if(!$res){
-                Json::fail('添加失败');
+                return  Json::fail('添加失败');
             }
         }
+
+
+
         return Json::successful($id > 0 ? '修改成功!' : '添加成功!');
 
     }
@@ -101,6 +108,10 @@ class CurrencyAndRatio extends AuthController
      */
     public function is_show(){
         $data =  request()->param();
+        $list = Db::name($this->table)->where('id',$data['id'])->find();
+        if(!$list)return  Json::fail('修改数据不存在');
+        $res = $this->redisInfo($list,$data['status']);
+        if(!$res)return  Json::fail('Redis链接失败');
         Db::name($this->table)->where('id',$data['id'])->update(['status' => $data['status']]);
 
         return Json::successful('修改成功!');
@@ -111,12 +122,33 @@ class CurrencyAndRatio extends AuthController
      * @return void 删除数据
      */
     public function delete($id = ''){
-        $res = Db::name($this->table)->where('id',$id)->delete();
+        $list = Db::name($this->table)->where('id',$id)->find();
+        if(!$list)return  Json::fail('修改数据不存在');
+        $res = $this->redisInfo($list,0);
+        if(!$res)return  Json::fail('Redis链接失败');
 
+        $res = Db::name($this->table)->where('id',$id)->delete();
         if(!$res){
             return Json::fail('删除失败');
         }
         return Json::successful('删除成功!');
+    }
+
+
+    public function redisInfo($data,$status){
+        $redis = new \app\admin\common\RedisDeleteWith();
+        if(!$redis)return 0;
+        if($status == 1){
+            $list = [
+                'image' => $data['image'],
+                'bili' => $data['bili'],
+                'weight' => $data['weight'],
+            ];
+            $redis->hset('currency_and_ratio_'.$data['type'],$data['name'],json_encode($list,JSON_UNESCAPED_SLASHES));
+        }else{
+            $redis->hdel('currency_and_ratio_'.$data['type'],$data['name']);
+        }
+        return1;
     }
 }
 
