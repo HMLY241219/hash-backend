@@ -247,6 +247,10 @@ class Withdrawlog extends AuthController
         $apInfo = json_decode($apInfo,true);
 
         if($apInfo['code'] != 200 ){
+            if($apInfo['code'] != 202){ //服务器与三方网络冲突,请过1分钟左右再尝试该通道
+                $userinfo = Db::name('userinfo')->field('uid,coin,total_exchange,total_exchange_num')->where('uid',$withdraw['uid'])->find();
+                $this->setUserWithdrawLogInfo($userinfo,$withdraw['money'],date('Ymd',$withdraw['createtime']));
+            }
             return ['code' => 201,'msg' => $apInfo['msg'],'data' => []];
         }
 
@@ -310,18 +314,29 @@ class Withdrawlog extends AuthController
             return ['code' => 201,'msg' => '不满足驳回条件','data' => []];
         }
 
-        $userinfo = Db::name('userinfo')->field('coin,package_id,channel')->where('uid',$withdraw['uid'])->find();
+        $userinfo = Db::name('userinfo')->field('uid,coin,package_id,channel,total_exchange,total_exchange_num')->where('uid',$withdraw['uid'])->find();
         Db::startTrans();
+
+        $this->setUserWithdrawLogInfo($userinfo,$withdraw['money'],date('Ymd',$withdraw['createtime']));
+
         if($withdraw['status'] == 0){
             $res = Db::name('userinfo')->where('uid',$withdraw['uid'])->update([
+                'coin' => Db::raw('coin + '.$withdraw['money']),
+                'withdraw_money' => Db::raw('withdraw_money + '.$withdraw['money']),
+                'withdraw_money_other' => Db::raw('withdraw_money_other + '.$withdraw['withdraw_money_other']),
+                'reject_num' => Db::raw('reject_num + 1'),
+            ]);
+        }else{
+            $res = Db::name('userinfo')
+                ->where('uid',$withdraw['uid'])
+                ->update([
                     'coin' => Db::raw('coin + '.$withdraw['money']),
                     'withdraw_money' => Db::raw('withdraw_money + '.$withdraw['money']),
-                    'withdraw_money_other' => Db::raw('withdraw_money_other + '.$withdraw['withdraw_money_other']),
-                    'reject_num' => Db::raw('reject_num + 1'),
+                    'withdraw_money_other' => Db::raw('withdraw_money_other + '.$withdraw['withdraw_money_other'])
                 ]);
-        }else{
-            $res = Db::name('userinfo')->where('uid',$withdraw['uid'])->update(['coin' => Db::raw('coin + '.$withdraw['money']),'withdraw_money' => Db::raw('withdraw_money + '.$withdraw['money']),'withdraw_money_other' => Db::raw('withdraw_money_other + '.$withdraw['withdraw_money_other'])]);
         }
+
+
 
         if(!$res){
             Db::rollback();
@@ -348,6 +363,15 @@ class Withdrawlog extends AuthController
             Db::rollback();
             return ['code' => 201,'msg' => '用户退款记录修改失败','data' => []];
         }
+
+        //存储发送内容
+        /*Db::name('user_information')->insert([
+            'uid' => $withdraw['uid'],
+            'title' => 'System messages',
+            'content' => $remark,
+            'createtime' => time(),
+        ]);*/
+
         Db::commit();
         return ['code' => 200,'msg' => '成功','data' => []];
     }
@@ -414,4 +438,42 @@ class Withdrawlog extends AuthController
         return config('redis.api').'/Withdrawlog/htWithdrawApi';
     }
 
+
+    /**
+     * 处理失败订单减去用户退款金额和次数
+     * @param $userinfo
+     * @param int $money
+     * @param $daySuffix 后缀 代付订单创建那天
+     * @return void
+     */
+    private function setUserWithdrawLogInfo($userinfo,int $money,$daySuffix = ''){
+        $daySuffix = $daySuffix ?: date('Ymd');
+
+        $user_day = Db::name('user_day_'.$daySuffix)->field('uid')->where('uid',$userinfo['uid'])->find();
+        if($user_day){
+            Db::name('user_day_'.$daySuffix)->where('uid',$userinfo['uid'])->update([
+                'total_exchange' => Db::raw('total_exchange - '.$money),
+                'total_exchange_num' => Db::raw('total_exchange_num - 1'),
+            ]);
+        }
+
+        if ($userinfo['total_exchange_num'] == 1){ //如果已经有一次退款了,看第二次金额是否是退款失败
+            Db::name('userinfo')->where('uid',$userinfo['uid'])
+                ->update([
+                    'total_exchange' => Db::raw('total_exchange - '.$money),
+                    'total_exchange_num' => Db::raw('total_exchange_num - 1'),
+                    'first_withdraw_time' => 0,
+                    'updatetime' =>time(),
+                ]);
+        }else{
+            Db::name('userinfo')->where('uid',$userinfo['uid'])
+                ->update([
+                    'total_exchange' => Db::raw('total_exchange - '.$money),
+                    'total_exchange_num' => Db::raw('total_exchange_num - 1'),
+                    'updatetime' => time(),
+                ]);
+        }
+
+
+    }
 }
