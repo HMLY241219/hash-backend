@@ -355,7 +355,10 @@ class SystemConfig extends AuthController
                     }
                 }
             }
-
+            //我们这边的
+            $redisDeleteWith = new \app\admin\common\RedisDeleteWith();
+            $redis = $redisDeleteWith->getRedis();
+            //刘哥那边的
             $Redis = getRedisConnect();
             $redis_config = config('systemconfig.config');
             foreach ($post as $k => $v) {
@@ -363,7 +366,7 @@ class SystemConfig extends AuthController
                 if($redis_config && in_array($k,$redis_config)){
                     $Redis->hSet('config',$k,$v);
                 }
-
+                $redis->hSet('system_config',$k,json_encode($v));
                 //框架自带的
                 ConfigModel::edit(['value' => json_encode($v)], $k, 'menu_name');
             }
