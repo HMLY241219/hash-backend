@@ -141,6 +141,8 @@ class CurrencyAndRatio extends AuthController
         if(!$redis)return 0;
         if($status == 1){
             $list = [
+                'id' => $data['id'],
+                'name' => $data['name'],
                 'image' => $data['image'],
                 'bili' => $data['bili'],
                 'weight' => $data['weight'],
