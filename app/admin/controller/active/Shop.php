@@ -47,7 +47,7 @@ class Shop extends AuthController
         $f[] = Form::input('hot_config', '是否热销配置(金额和配置以|分隔为一组, 然后以空格分隔单位:1=是,0=否)');
 
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {
@@ -83,7 +83,7 @@ class Shop extends AuthController
         $f[] = Form::input('hot_config', '是否热销配置(金额和配置以|分隔为一组, 然后以空格分隔单位:1=是,0=否)',$banner['hot_config']);
 
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型',$banner['currency'])->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {

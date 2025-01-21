@@ -47,7 +47,7 @@ class Refundmethod extends AuthController
         $f[] = Form::radio('status', '是否开启', 1)->options([['label' => '开启', 'value' => 1],['label' => '关闭', 'value' => 0]]);
         $f[] = Form::radio('currency', '是否开启', 1)->options([['label' => '开启', 'value' => 1],['label' => '关闭', 'value' => 0]]);
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型','VND')->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {
@@ -88,7 +88,7 @@ class Refundmethod extends AuthController
         $f[] = Form::radio('type', '类型' ,$active['type'])->options([['label' => '银行卡', 'value' => 1],['label' => 'UPI', 'value' => 2],['label' => '钱包', 'value' => 3],['label' => '数字货币', 'value' => 4]]);
         $f[] = Form::radio('status', '是否开启',$active['status'])->options([['label' => '开启', 'value' => 1],['label' => '关闭', 'value' => 0]]);
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型',$active['currency'])->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {

@@ -71,7 +71,7 @@ class OrderActive extends AuthController
         }
 
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型',$active['currency'])->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {

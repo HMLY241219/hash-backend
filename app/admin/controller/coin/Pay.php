@@ -50,7 +50,7 @@ class Pay extends AuthController
         $f[] = Form::input('englishname', '客户端昵称');
 //        $f[] = Form::uploadImageOne('icon', 'logo');
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {
@@ -100,7 +100,7 @@ class Pay extends AuthController
             return $menus;
         })->filterable(1)->multiple(true);
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型',$pay_type['currency'])->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {

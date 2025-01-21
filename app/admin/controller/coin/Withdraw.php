@@ -51,7 +51,7 @@ class Withdraw extends AuthController
 //        $f[] = Form::uploadImageOne('icon', 'logo');
         $f[] = Form::uploadImageOne('icon', 'logo',url('widget.Image/file',['file'=>'icon']));
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {
@@ -102,7 +102,7 @@ class Withdraw extends AuthController
 
 
 
-        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->select()->toArray();
         $f[] = Form::select('currency','货币类型',$withdraw_type['currency'])->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {
