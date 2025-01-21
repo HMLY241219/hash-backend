@@ -45,7 +45,7 @@ class PaymentType extends AuthController
 
         $f[] = Form::uploadImageOne('image', '图片',url('widget.Image/file',['file'=>'image']));
         $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
-        $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
+        $f[] = Form::select('currency','货币类型','VND')->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {
                 $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];

@@ -48,7 +48,7 @@ class Refundmethod extends AuthController
         $f[] = Form::radio('currency', '是否开启', 1)->options([['label' => '开启', 'value' => 1],['label' => '关闭', 'value' => 0]]);
 
         $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
-        $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
+        $f[] = Form::select('currency','货币类型','VND')->setOptions(function () use ($currency_and_ratio){
             $menus = [];
             foreach ($currency_and_ratio as $menu) {
                 $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
