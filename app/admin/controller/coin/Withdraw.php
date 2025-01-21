@@ -28,7 +28,7 @@ class Withdraw extends AuthController
 
 
         $tablename = "withdraw_type";
-        $filed = "a.id,FROM_UNIXTIME(a.updatetime,'%Y-%m-%d %H:%i:%s') as updatetime,a.icon ,a.name,b.real_name as admin_id,a.weight,a.minmoney,a.maxmoney,a.fee_money,a.fee_bili,a.status,a.englishname,a.upi_status,a.ht_weight,a.is_specific_channel,a.refundmethod_ids,a.video_url";
+        $filed = "a.id,FROM_UNIXTIME(a.updatetime,'%Y-%m-%d %H:%i:%s') as updatetime,a.icon ,a.name,b.real_name as admin_id,a.weight,a.minmoney,a.maxmoney,a.fee_money,a.fee_bili,a.status,a.englishname,a.upi_status,a.ht_weight,a.is_specific_channel,a.refundmethod_ids,a.video_url,a.currency";
         $orderfield = "a.ht_weight";
         $sort = "desc";
         $join = ['system_admin b','b.id = a.admin_id'];

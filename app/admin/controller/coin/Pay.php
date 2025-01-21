@@ -28,7 +28,7 @@ class Pay extends AuthController
 
 
         $tablename = "pay_type";
-        $filed = "a.id,a.send_bili,FROM_UNIXTIME(a.updatetime,'%Y-%m-%d %H:%i:%s') as updatetime,a.icon ,a.name,b.real_name as admin_id,a.weight,a.minmoney,a.maxmoney,a.fee_money,a.fee_bili,a.status,a.englishname,a.wake_status,a.is_specific_channel,a.ht_weight,a.video_url";
+        $filed = "a.id,a.send_bili,FROM_UNIXTIME(a.updatetime,'%Y-%m-%d %H:%i:%s') as updatetime,a.icon ,a.name,b.real_name as admin_id,a.weight,a.minmoney,a.maxmoney,a.fee_money,a.fee_bili,a.status,a.englishname,a.wake_status,a.is_specific_channel,a.ht_weight,a.video_url,a.currency";
         $orderfield = "a.ht_weight";
         $sort = "desc";
         $join = ['system_admin b','b.id = a.admin_id'];
