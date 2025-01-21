@@ -21,9 +21,9 @@
 </div>
 {/block}
 {block name="script"}
-<!--<script type="text/html" id="toolbar">-->
-<!--    <span class="layui-btn " onclick="$eb.createModalFrame(this.innerText,`{:url('add')}`)" >添加</span>-->
-<!--</script>-->
+<script type="text/html" id="toolbar">
+    <span class="layui-btn " onclick="$eb.createModalFrame(this.innerText,`{:url('add')}`)" >添加</span>
+</script>
 <script type="text/html" id="act">
     <span class="layui-btn layui-btn-xs layui-btn-warm" onclick="$eb.createModalFrame(this.innerText,`{:url('edit')}?id={{d.id}}`)">编辑</span>
 
