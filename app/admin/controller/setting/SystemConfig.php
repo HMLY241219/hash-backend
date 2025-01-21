@@ -372,10 +372,11 @@ class SystemConfig extends AuthController
             }
             CacheService::clear();
 
-            // 清除配置缓存
-            $cacheKeys = $Redis->keys('SYS_CONF_LIST_*');
+            // 清除hash游戏配置缓存
+            $redis->select(4);
+            $cacheKeys = $redis->keys('SYS_CONF_LIST_*');
             foreach ($cacheKeys as $ck) {
-                $Redis->del($ck);
+                $redis->del($ck);
             }
 
             return $this->successful('修改成功');

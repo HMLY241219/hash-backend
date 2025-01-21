@@ -641,14 +641,16 @@ class Game extends AuthController
             $res = Db::name('block_game')->where('game_id',$params['game_id'])->update([$ruleType.'_bet_rule' => json_encode($roomRule)]);
             if ($res > 0) {
                 // 清除游戏信息缓存
-                $Redis = getRedisConnect();
-                $cacheKeys = $Redis->keys('BLOCK_GAME_LIST_*');
+                $redisDeleteWith = new \app\admin\common\RedisDeleteWith();
+                $redis = $redisDeleteWith->getRedis();
+                $redis->select(4);
+                $cacheKeys = $redis->keys('BLOCK_GAME_LIST_*');
                 foreach ($cacheKeys as $ck) {
-                    $Redis->del($ck);
+                    $redis->del($ck);
                 }
-                $cacheKeys = $Redis->keys('BLOCK_GAME_INFO_*');
+                $cacheKeys = $redis->keys('BLOCK_GAME_INFO_*');
                 foreach ($cacheKeys as $ck) {
-                    $Redis->del($ck);
+                    $redis->del($ck);
                 }
             }
             if ($res !== false) return Json::success('操作成功');
