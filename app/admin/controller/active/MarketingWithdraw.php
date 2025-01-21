@@ -33,7 +33,7 @@ class MarketingWithdraw extends AuthController
         $sort = "desc";
 
 
-        $data = Model::Getdata($this->table,$filed,$data,$orderfield,$sort,$page,$limit,'createtime',[['user_type','<>',0],['terminal_type','=',1]]);
+        $data = Model::Getdata($this->table,$filed,$data,$orderfield,$sort,$page,$limit);
 
         return json(['code' => 0, 'count' => $data['count'], 'data' => $data['data']]);
     }
