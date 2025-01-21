@@ -50,6 +50,16 @@ class Withdraw extends AuthController
         $f[] = Form::input('englishname', '客户端昵称');
 //        $f[] = Form::uploadImageOne('icon', 'logo');
         $f[] = Form::uploadImageOne('icon', 'logo',url('widget.Image/file',['file'=>'icon']));
+
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
+
         $f[] = Form::input('minmoney', '提现最小金额(雷亚尔分)');
         $f[] = Form::input('maxmoney', '提现最大金额(雷亚尔分)');
         $f[] = Form::input('fee_bili', '手续费(比例0.01=1%)');
@@ -89,6 +99,18 @@ class Withdraw extends AuthController
             }
             return $menus;
         })->filterable(1)->multiple(true);
+
+
+
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型',$withdraw_type['currency'])->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
+
 
         $f[] = Form::input('minmoney', '提现最小金额(雷亚尔分)',$withdraw_type['minmoney']);
         $f[] = Form::input('maxmoney', '提现最大金额(雷亚尔分)',$withdraw_type['maxmoney']);

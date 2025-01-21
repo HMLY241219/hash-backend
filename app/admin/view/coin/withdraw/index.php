@@ -99,6 +99,7 @@
                 {field: 'fee_money', title: '手续费(固定值雷亚尔元)', minWidth: 170 , templet(d){
                         return d.fee_money /100
                     }},
+                {field: 'currency', title: '货币', minWidth: 80},
                 {field: 'weight', title: '权重', minWidth: 80, sort: true},
                 {field: 'ht_weight', title: '后台排序权重', minWidth: 80, sort: true},
                 {

@@ -55,7 +55,7 @@ class OrderActive extends AuthController
         $f[] = Form::input('get_bonus', '立刻得到的Bonus(分)',$active['get_bonus']);
         $f[] = Form::input('next_get_cash', '第二次/赠送得到的Cash(分)',$active['next_get_cash']);
         if($active['type'] == 7){
-              $f[] = Form::input('piggy_money', '存钱罐累计存钱金额(分)',$active['piggy_money']);
+            $f[] = Form::input('piggy_money', '存钱罐累计存钱金额(分)',$active['piggy_money']);
         }else{
             $f[] = Form::input('next_get_bonus', '第二次得到的Bonus(分)',$active['next_get_bonus']);
             $f[] = Form::input('last_get_cash', '最后一次得到的Cash(分)',$active['last_get_cash']);
@@ -69,6 +69,17 @@ class OrderActive extends AuthController
             $f[] = Form::input('customer_money', '客损金额大于多少',$active['customer_money']);
             $f[] = Form::input('num', '参与次数',$active['num']);
         }
+
+
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型',$active['currency'])->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
+
 
         if($active['type'] == 2){
             $f[] = Form::input('day', '连续领取多少天',$active['num']);

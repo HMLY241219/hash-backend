@@ -49,6 +49,16 @@ class Pay extends AuthController
         $f[] = Form::input('name', '渠道名称')->disabled(true);
         $f[] = Form::input('englishname', '客户端昵称');
 //        $f[] = Form::uploadImageOne('icon', 'logo');
+
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
+
         $f[] = Form::uploadImageOne('icon', 'logo',url('widget.Image/file',['file'=>'icon']));
         $f[] = Form::input('minmoney', '充值最小金额(雷亚尔分)');
         $f[] = Form::input('maxmoney', '充值最大金额(雷亚尔分)');
@@ -89,6 +99,17 @@ class Pay extends AuthController
             }
             return $menus;
         })->filterable(1)->multiple(true);
+
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型',$pay_type['currency'])->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
+
+
         $f[] = Form::uploadImageOne('icon', 'logo',url('widget.Image/file',['file'=>'icon']),$pay_type['icon']);
         $f[] = Form::input('minmoney', '充值最小金额(雷亚尔分)',$pay_type['minmoney']);
         $f[] = Form::input('maxmoney', '充值最大金额(雷亚尔分)',$pay_type['maxmoney']);

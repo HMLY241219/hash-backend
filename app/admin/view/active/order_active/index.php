@@ -105,6 +105,7 @@
                 {field: 'customer_money', title: '客损金额',align: 'center', minWidth: 120,templet(d){
                         return `${(d.customer_money/100).toFixed(2)}`
                     }},
+                {field: 'currency', title: '货币', minWidth: 80},
                 {field: 'lose_water_multiple',align: 'center', title: '流水倍数低于多少倍', minWidth: 120},
                 {field: 'high_water_multiple',align: 'center', title: '流水倍数高于多少倍', minWidth: 120},
                 {field: 'withdraw_bili',align: 'center', title: '退款比例低于多少', minWidth: 120},

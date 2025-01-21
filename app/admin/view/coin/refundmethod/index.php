@@ -68,6 +68,7 @@
                 {field: 'id', title: 'ID', minWidth: 88},
                 {field: 'name', title: '名称', minWidth: 110},
                 {field: 'weight', title: '权重', minWidth: 110},
+                {field: 'currency', title: '货币', minWidth: 80},
                 {field: 'type', title: '类型', minWidth: 180, templet:"#type"},
                 {field: 'status', title: '状态', width: 140, templet:"#status"},
                 {fixed: 'right', title: '操作', align: 'center', width: 130, toolbar: '#act'}

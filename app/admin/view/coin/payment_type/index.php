@@ -73,13 +73,14 @@
                         return  '<img class="image" src='+d.image+' style="width:50px;height:50px">'
                     }},
 
-
+                {field: 'currency', title: '货币', minWidth: 80},
                 {field: 'weight', title: '权重', minWidth: 110},
                 {field: 'ht_weight', title: '后台权重', minWidth: 110},
                 {field: 'zs_bili', title: '人工充值显示赠送比例', minWidth: 110},
                 {field: 'first_zs_bonus_bili', title: '首充赠送Bonus', minWidth: 110},
                 {field: 'zs_bonus_bili', title: '复充赠送Bonus', minWidth: 110},
                 {field: 'url', title: '人工充值链接', minWidth: 110},
+
                 {field: 'type', title: '类型', minWidth: 180, templet:"#type"},
                 {field: 'status', title: '状态', width: 140, templet:"#status"},
                 {fixed: 'right', title: '操作', align: 'center', width: 130, toolbar: '#act'}

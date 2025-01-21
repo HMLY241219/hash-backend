@@ -100,6 +100,7 @@
                 //         return d.fee_money /100
                 //     }},
                 // {field: 'send_bili', title: '额外赠送(比例)', minWidth: 120, },
+                {field: 'currency', title: '货币', minWidth: 80},
                 {field: 'weight', title: '权重', minWidth: 80, sort: true},
                 {field: 'ht_weight', title: '后台权重排序', minWidth: 80, sort: true},
                 {

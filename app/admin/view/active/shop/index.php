@@ -115,6 +115,9 @@
                 {field: 'coin_money', title: '用户余额',align: 'center', minWidth: 120, templet(d){
                         return d.coin_money/100
                     }},
+
+                {field: 'currency', title: '货币', minWidth: 80},
+
                 {field: 'user_type', title: '用户类型',align: 'center', minWidth: 150,templet:"#user_type"},
                 {field: 'is_new_package', title: '是否是新包配置',align: 'center', minWidth: 150,templet:"#is_new_package"},
                 // {field: 'terminal_type', title: '版本类型', minWidth: 150,templet:"#terminal_type"},

@@ -40,10 +40,18 @@ class PaymentType extends AuthController
 
     public function add(){
 
+
         $f[] = Form::input('name', '名称');
 
         $f[] = Form::uploadImageOne('image', '图片',url('widget.Image/file',['file'=>'image']));
-
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
         $f[] = Form::number('weight', '权重');
         $f[] = Form::number('ht_weight', '后台权重');
         $f[] = Form::input('zs_bili', '人工充值显示赠送比例填2个比例(首充|复充)');
@@ -71,7 +79,14 @@ class PaymentType extends AuthController
 
         $f[] = Form::uploadImageOne('image', '图片',url('widget.Image/file',['file'=>'image']),$active['image']);
 
-
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型',$active['currency'])->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
 
         $f[] = Form::number('weight', '权重',$active['weight']);
         $f[] = Form::number('ht_weight', '后台权重',$active['ht_weight']);

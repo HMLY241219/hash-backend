@@ -45,6 +45,17 @@ class Shop extends AuthController
         $f[] = Form::input('bonus_config', 'Bonus赠送配置(金额和bouns以|分隔为一组, 然后以空格分隔单位:卢比分)');
         $f[] = Form::input('cash_config', 'Cash赠送配置(金额和cash以|分隔为一组, 然后以空格分隔单位:卢比分)');
         $f[] = Form::input('hot_config', '是否热销配置(金额和配置以|分隔为一组, 然后以空格分隔单位:1=是,0=否)');
+
+
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型')->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
+
         $f[] = Form::input('weight', '权重');
         $f[] = Form::radio('user_type', '用户类型',0)->options([['label' => '全部', 'value' => 0], ['label' => '广告', 'value' => 1],['label' => '自然量', 'value' => 2],['label' => '分享', 'value' => 3]]);
 //        $f[] = Form::radio('terminal_type', '版本类型:',1)->options([['label' => 'APP', 'value' => 1], ['label' => 'H5', 'value' => 2]]);
@@ -70,6 +81,17 @@ class Shop extends AuthController
         $f[] = Form::input('bonus_config', 'Bonus赠送配置(金额和bouns以|分隔为一组, 然后以空格分隔单位:卢比分)',$banner['bonus_config']);
         $f[] = Form::input('cash_config', 'Cash赠送配置(金额和cash以|分隔为一组, 然后以空格分隔单位:卢比分)',$banner['cash_config']);
         $f[] = Form::input('hot_config', '是否热销配置(金额和配置以|分隔为一组, 然后以空格分隔单位:1=是,0=否)',$banner['hot_config']);
+
+
+        $currency_and_ratio = Db::name('currency_and_ratio')->field('id,name')->where('type',1)->select()->toArray();
+        $f[] = Form::select('currency','货币类型',$banner['currency'])->setOptions(function () use ($currency_and_ratio){
+            $menus = [];
+            foreach ($currency_and_ratio as $menu) {
+                $menus[] = ['value' => $menu['name'], 'label' => $menu['name']];
+            }
+            return $menus;
+        })->filterable(1);
+
         $f[] = Form::input('weight', '权重',$banner['weight']);
         $f[] = Form::radio('user_type', '用户类型',$banner['user_type'])->options([['label' => '全部', 'value' => 0], ['label' => '广告', 'value' => 1],['label' => '自然量', 'value' => 2],['label' => '分享', 'value' => 3]]);
 //        $f[] = Form::radio('terminal_type', '版本类型:',$banner['terminal_type'])->options([['label' => 'APP', 'value' => 1], ['label' => 'H5', 'value' => 2]]);
