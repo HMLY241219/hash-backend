@@ -45,6 +45,7 @@ class CurrencyAndRatio extends AuthController
         $f[] = Form::number('bili', '货币与U的比例(2位小数)');
         $f[] = Form::radio('type', '货币类型', 1)->options([['label' => '法币', 'value' => 1],['label' => '虚拟货币', 'value' => 2]]);
         $f[] = Form::radio('status', '是否开启', 1)->options([['label' => '开启', 'value' => 1],['label' => '关闭', 'value' => 0]]);
+        $f[] = Form::input('pay_min_max', '最低最高充值(以|分隔,最小|最大)');
         $f[] = Form::number('weight', '权重');
         $form = Form::make_post_form('修改数据', $f, url('save'));
         $this->assign(compact('form'));
@@ -66,6 +67,7 @@ class CurrencyAndRatio extends AuthController
         $f[] = Form::radio('type', '货币类型' ,$active['type'])->options([['label' => '法币', 'value' => 1],['label' => '虚拟货币', 'value' => 2]]);
         $f[] = Form::radio('status', '是否开启' ,$active['status'])->options([['label' => '开启', 'value' => 1],['label' => '关闭', 'value' => 0]]);
         $f[] = Form::number('weight', '权重',$active['weight']);
+        $f[] = Form::input('pay_min_max', '最低最高充值(以|分隔,最小|最大)',$active['pay_min_max']);
         $form = Form::make_post_form('修改数据', $f, url('save',['id' => $id]));
         $this->assign(compact('form'));
         return $this->fetch('public/form-builder');

@@ -69,7 +69,7 @@
                 {field: 'bili', title: '货币与U的比例(2位小数)', minWidth: 110},
 
                 {field: 'weight', title: '权重', minWidth: 110},
-
+                {field: 'pay_min_max', title: '最低最高充值', minWidth: 180},
                 {field: 'type', title: '类型', minWidth: 180, templet:"#type"},
                 {field: 'status', title: '状态', width: 140, templet:"#status"},
                 {fixed: 'right', title: '操作', align: 'center', width: 130, toolbar: '#act'}
