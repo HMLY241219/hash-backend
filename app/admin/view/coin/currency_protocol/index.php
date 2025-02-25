@@ -78,6 +78,7 @@
                 {field: 'max_money', title: '最大充币提币金额', minWidth: 110, templet(d) {
                         return (d.max_money/100).toFixed(2)
                     }},
+                {field: 'digital_currency_address', title: '转账钱包地址', minWidth: 180},
                 {field: 'status', title: '状态', width: 140, templet:"#status"},
                 {fixed: 'right', title: '操作', align: 'center', width: 130, toolbar: '#act'}
             ]]
