@@ -79,6 +79,9 @@
                         return (d.max_money/100).toFixed(2)
                     }},
                 {field: 'digital_currency_address', title: '转账钱包地址', minWidth: 180},
+                {field: 'digital_currency_url', title: '转账钱包二维码', minWidth: 110, templet(d) {
+                        return  '<img class="image" src='+d.digital_currency_url+' style="width:50px;height:50px">'
+                    }},
                 {field: 'status', title: '状态', width: 140, templet:"#status"},
                 {fixed: 'right', title: '操作', align: 'center', width: 130, toolbar: '#act'}
             ]]

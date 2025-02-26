@@ -47,6 +47,7 @@ class CurrencyProtocol extends AuthController
         $f[] = Form::number('min_money', '最低充币提币金额');
         $f[] = Form::number('max_money', '最大充币提币金额');
         $f[] = Form::input('digital_currency_address', '转账钱包地址');
+        $f[] = Form::uploadImageOne('digital_currency_url', '转账钱包二维码',url('widget.Image/file',['file'=>'digital_currency_url']));
         $f[] = Form::radio('status', '是否开启', 1)->options([['label' => '开启', 'value' => 1],['label' => '关闭', 'value' => 0]]);
         $form = Form::make_post_form('修改数据', $f, url('save'));
         $this->assign(compact('form'));
@@ -69,6 +70,7 @@ class CurrencyProtocol extends AuthController
         $f[] = Form::number('min_money', '最低充币提币金额',$active['min_money']);
         $f[] = Form::number('max_money', '最大充币提币金额',$active['max_money']);
         $f[] = Form::input('digital_currency_address', '转账钱包地址',$active['digital_currency_address']);
+        $f[] = Form::uploadImageOne('digital_currency_url', '转账钱包二维码',url('widget.Image/file',['file'=>'digital_currency_url']),$active['digital_currency_url']);
         $f[] = Form::radio('status', '是否开启',$active['status'])->options([['label' => '开启', 'value' => 1],['label' => '关闭', 'value' => 0]]);
         $form = Form::make_post_form('修改数据', $f, url('save',['id' => $id]));
         $this->assign(compact('form'));
